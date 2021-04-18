@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.ProfileFragment"
+    android:gravity="center"
     android:orientation="vertical">
 
     <ImageView
@@ -17,6 +18,8 @@
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="this is profile fragment" />
+        android:text="This is profile fragment"
+        android:textSize="25sp"
+        android:gravity="center"/>
 
 </LinearLayout>
