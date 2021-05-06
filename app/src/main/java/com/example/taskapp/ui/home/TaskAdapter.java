@@ -1,53 +1,32 @@
 package com.example.taskapp.ui.home;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.taskapp.App;
 import com.example.taskapp.OnItemClickListener;
 import com.example.taskapp.R;
+import com.example.taskapp.models.Model;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
-    private ArrayList<String> list;
 
-    public static final String key1 = "key1";
-    public static final String key2 = "key2";
-
-    public TextView textTitle;
-    private String text;
-    private onClick onClick;
-
-    public TaskAdapter(onClick onClick) {
-        this.list = new ArrayList<>();
-        this.onClick = onClick;
-        list.add("Пшеница");
-        list.add("Картофель");
-        list.add("Молочные продукты");
-        list.add("Масло растительное");
-        list.add("Рис");
-        list.add("Кукуруза");
-        list.add("Гречневое зерно");
-        list.add("Овес");
-        list.add("Яблоки");
-        list.add("Персики");
-        list.add("Бахчевые");
-        list.add("Мясная продукция");
-        list.add("Сахар");
-        list.add("Соль");
-        list.add("Премиксы");
-        list.add("Пшеничные продукты");
-        list.add("Груши");
-        list.add("Пектины");
-    }
+    private ArrayList<Model> list = new ArrayList<>();
+    private int position;
+    private OnItemClickListener onItemClickListener;
+    private Button btn_menu_sort;
 
     @NonNull
     @Override
@@ -65,7 +44,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         } else {
             holder.itemView.setBackgroundColor(Color.LTGRAY);
         }
-        holder.bind(list.get(position));
+        holder.onBind(list.get(position));
     }
 
     @Override
@@ -73,55 +52,63 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         return list.size();
     }
 
-    public void addItem(String title) {
-        list.add(0, title);
-        notifyItemInserted(list.size() - 1);
+
+    public void addItem(Model model) {
+        list.add(0, model);
+        notifyItemChanged(list.indexOf(0));
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public void setList(ArrayList<Model> list) {
+        this.list.clear();
+        this.list.addAll(list);
+        notifyDataSetChanged();
+    }
 
+    public void sortList(ArrayList<Model> sortAll) {
+        this.list.clear();
+        this.list.addAll(list);
+        notifyDataSetChanged();
+    }
+
+    public void remove(int position) {
+        list.remove(position);
+        notifyItemRemoved(position);
+    }
+
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private TextView textTv, dateTv;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            textTitle = itemView.findViewById(R.id.textTitle);
-            text = textTitle.getText().toString();
+            textTv = itemView.findViewById(R.id.textTitle);
+            dateTv = itemView.findViewById(R.id.date_tv);
+            itemView.setOnClickListener(v -> onItemClickListener.onItemClick(getAdapterPosition()));
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                onClick.send(list.get(getAdapterPosition()));
-                                            }
-                                        });
-
-                    itemView.setOnLongClickListener(v1 -> {
-                        OnItemClickListener.onLongClick(getAdapterPosition());
-                        return true;
-                    });
-
-            itemView.setOnLongClickListener(v -> {
-            AlertDialog alertDialog = new AlertDialog.Builder(itemView.getContext()).setMessage("Вы хотите удалить?")
-                    .setPositiveButton("Да", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    list.remove(getAdapterPosition());
-                    notifyDataSetChanged();
-                }
-            }).setNegativeButton("Нет",null).create();
-            alertDialog.show();
-            return true;
-        });
+            itemView.setOnLongClickListener(v1 -> {
+                AlertDialog alertDialog = new AlertDialog.Builder(itemView.getContext()).setMessage("Вы хотите удалить?")
+                        .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                list.remove(getAdapterPosition());
+                                App.appDatabase.taskDao().delete(list.get(getAdapterPosition()));
+                                notifyDataSetChanged();
+                            }
+                        }).setNegativeButton("Нет", null).create();
+                alertDialog.show();
+                return true;
+            });
         }
 
-        public void bind(String s) {
-            textTitle.setText(s);
+        public void onBind(Model model) {
+            textTv.setText(model.getName());
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm, dd MM yyyy");
+            String date = dateFormat.format(model.getCreatedAt());
+            dateTv.setText(date);
         }
     }
-    public  interface onClick{
-        void send(String string);
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
     }
-
-
 }
-
-
-

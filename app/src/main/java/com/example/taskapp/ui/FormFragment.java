@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,15 +13,18 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.example.taskapp.App;
 import com.example.taskapp.R;
+import com.example.taskapp.models.Model;
+
+import java.io.Serializable;
+import java.util.Date;
 
 
 public class FormFragment extends Fragment {
 
     private EditText editText;
-
-
-
+    private TextView createdAt;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -32,22 +36,25 @@ public class FormFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        editText =view.findViewById(R.id.editText);
+        editText = view.findViewById(R.id.editText);
         view.findViewById(R.id.btnSave).setOnClickListener(v -> {
             save();
         });
-        getParentFragmentManager().setFragmentResultListener("ket", getViewLifecycleOwner(), (requestKey, result) -> {
-            String title = result.getString("key");
-            editText.setText(title);
+        getParentFragmentManager().setFragmentResultListener("key", getViewLifecycleOwner(), (requestKey, result) -> {
+            Serializable model = result.getSerializable("keyData");
         });
     }
 
     private void save() {
         String text = editText.getText().toString();
-        Bundle bundle = new Bundle();
-        bundle.putString("title",text);
-        getParentFragmentManager().setFragmentResult("rk_task",bundle);
-        close();
+        if (text != null) {
+            Model model = new Model(text, new Date());
+            App.appDatabase.taskDao().insert(model);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("model", model);
+            getParentFragmentManager().setFragmentResult("rk_task", bundle);
+            close();
+        }
     }
 
     private void close() {

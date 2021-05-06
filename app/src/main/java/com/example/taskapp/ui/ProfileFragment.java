@@ -1,38 +1,42 @@
 package com.example.taskapp.ui;
 
 
-import android.app.Activity;
-import android.app.Instrumentation;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 
+import com.example.taskapp.utils.Preferences;
 import com.example.taskapp.R;
 
 
 public class ProfileFragment extends Fragment {
-
-    private TextView nameFromGallery;
     private ImageView imageFromGallery;
+    private EditText aboutCompany;
+    private EditText telNumber;
+    private EditText nameProfile;
+
     private ActivityResultLauncher<String> content;
+
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Preferences.getInstance(getContext()).getTxt() != null) {
+            nameProfile.setText(Preferences.getInstance().getTxt());
+        }
     }
 
     @Override
@@ -41,11 +45,13 @@ public class ProfileFragment extends Fragment {
 
         return inflater.inflate(R.layout.fragment_profile, container, false);
     }
+
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        nameFromGallery = view.findViewById(R.id.name);
         imageFromGallery = view.findViewById(R.id.imageGallery);
-
+        aboutCompany = view.findViewById(R.id.aboutCompany);
+        telNumber = view.findViewById(R.id.telNumber);
+        nameProfile = view.findViewById(R.id.nameProfile);
 
         imageFromGallery.setOnClickListener(v -> {
             ProfileFragment.this.content.launch("image/*");
@@ -56,17 +62,29 @@ public class ProfileFragment extends Fragment {
                 imageFromGallery.setImageURI(result);
             }
         });
+        nameProfile.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Preferences.saveNameProfile(s.toString());
+                Log.e("TAG", "afterTextChanged: " + s.toString());
+            }
+        });
 
 
-//        NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
-//        navController.navigate(R.id.profileFragment);
-
-
-
+//       public void closeProfile() {
+//       NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
+//        navController.navigateUp();}
     }
-
-
-
 
 
 }

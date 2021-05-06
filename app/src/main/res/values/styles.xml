@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="FrameStyle">
+        <item name="android:background">?android:attr/textSelectHandle</item>
+    </style>
+    <style name="LStyle">
+        <item name="android:background">@drawable/frame_style</item>
+    </style>
+    @drawable/frame_style
+</resources>

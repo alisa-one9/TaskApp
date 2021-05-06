@@ -3,23 +3,71 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.ProfileFragment"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="5dp"
+    android:background="@color/purple_700"
+    >
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="370dp"
+        android:background="@android:color/holo_blue_light">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageGallery"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_margin="140dp"
-        android:src="@drawable/girl" />
+        android:src="@drawable/fivestore"
+       android:layout_gravity="center_horizontal"
+        android:layout_marginTop="5dp"
+        app:civ_border_color="@color/purple_200"
+        android:padding="3dp"
+        android:background="@color/teal_200"
+        />
+        <EditText
+            android:id="@+id/aboutCompany"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="25dp"
+            android:layout_marginTop="175dp"
+            android:background="@color/design_default_color_on_primary"
+            android:padding="3dp"
+            android:text="Заключим контракт на поставку
+        50 тыс тонн моркови к 05.09.21. сорт Чуйский , стандарт ИСО 22000 обязателен"/>
+    </FrameLayout>
 
-    <TextView
-        android:id="@+id/name"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="This is profile fragment"
+        android:background="@color/teal_200"
+        android:padding="10dp">
+
+    <EditText
+        android:id="@+id/telNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        android:hint="тел:"
+        android:text="+954 786 56 893"
+        android:background="@color/white" />
+
+    <EditText
+        android:id="@+id/nameProfile"
+        android:layout_width="148dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="125dp"
+        android:layout_marginTop="90dp"
+        android:gravity="center_vertical"
+        android:textAllCaps="false"
         android:textSize="25sp"
-        android:gravity="center"/>
+        android:textColor="@color/black"
+        android:text="Сеть Пятерочка"
+        android:background="@color/white"/>
+</FrameLayout>
+
+
 
 </LinearLayout>

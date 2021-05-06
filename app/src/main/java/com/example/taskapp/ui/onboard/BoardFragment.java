@@ -15,13 +15,12 @@ import androidx.navigation.Navigation;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.taskapp.OnItemClickListener;
+import com.example.taskapp.utils.Preferences;
 import com.example.taskapp.R;
-import com.example.taskapp.ui.home.TaskAdapter;
 import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator;
 
 
-
-public class boardFragment extends Fragment implements TaskAdapter.onClick {
+public class BoardFragment extends Fragment {
     private ViewPager2 viewPager;
     private SpringDotsIndicator springDotsIndicator;
     private Button btnSkip;
@@ -36,12 +35,12 @@ public class boardFragment extends Fragment implements TaskAdapter.onClick {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-         viewPager = view.findViewById(R.id.viewPager);
-         springDotsIndicator = view.findViewById(R.id.dots);
-        BoardAdapter adapter = new BoardAdapter(this::send);
+        viewPager = view.findViewById(R.id.viewPager);
+        springDotsIndicator = view.findViewById(R.id.dots);
+        BoardAdapter adapter = new BoardAdapter();
         viewPager.setAdapter(adapter);
         springDotsIndicator.setViewPager2(viewPager);
-        btnSkip =view.findViewById(R.id.btnSkip);
+        btnSkip = view.findViewById(R.id.btnSkip);
         btnSkip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,25 +49,32 @@ public class boardFragment extends Fragment implements TaskAdapter.onClick {
         });
 
         adapter.setOnItemClickListener(new OnItemClickListener() {
-            public void onClick(int position) {
+            @Override
+            public void onItemClick(int position) {
                 close();
             }
-        });
-        requireActivity().getOnBackPressedDispatcher()
-                .addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+
             @Override
-            public void handleOnBackPressed() {
-                requireActivity().finish();
+            public void onLongClick(int position) {
+
             }
         });
+
+        requireActivity().getOnBackPressedDispatcher()
+                .addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+                    @Override
+                    public void handleOnBackPressed() {
+                        requireActivity().finish();
+                    }
+                });
     }
+
     private void close() {
+        Preferences prefs = new Preferences(requireContext());
+        prefs.saveBoardState();
         NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
         navController.navigateUp();
     }
 
-    @Override
-    public void send(String string) {
-        close();
-    }
+
 }
