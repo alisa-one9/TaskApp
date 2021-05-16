@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -12,61 +11,56 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.viewpager2.widget.ViewPager2;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.taskapp.OnItemClickListener;
-import com.example.taskapp.utils.Preferences;
 import com.example.taskapp.R;
-import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator;
+import com.example.taskapp.databinding.FragmentBoardBinding;
+import com.example.taskapp.models.Model;
+import com.example.taskapp.utils.Preferences;
 
 
 public class BoardFragment extends Fragment {
-    private ViewPager2 viewPager;
-    private SpringDotsIndicator springDotsIndicator;
-    private Button btnSkip;
+    private FragmentBoardBinding binding;
+    private NavController navController;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_board, container, false);
+        navController = NavHostFragment.findNavController(this);
+        binding = FragmentBoardBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        viewPager = view.findViewById(R.id.viewPager);
-        springDotsIndicator = view.findViewById(R.id.dots);
         BoardAdapter adapter = new BoardAdapter();
-        viewPager.setAdapter(adapter);
-        springDotsIndicator.setViewPager2(viewPager);
-        btnSkip = view.findViewById(R.id.btnSkip);
-        btnSkip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                close();
-            }
-        });
+        binding.viewPager.setAdapter(adapter);
+        binding.dots.setViewPager2(binding.viewPager);
+        binding.btnSkip.setOnClickListener(v -> close());
+
+        requireActivity()
+                .getOnBackPressedDispatcher()
+                .addCallback(getViewLifecycleOwner(),
+                        new OnBackPressedCallback(true) {
+                            @Override
+                            public void handleOnBackPressed() {
+                                requireActivity().finish();
+                            }
+                        });
 
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
-            public void onItemClick(int position) {
+            public void onClick(Model model, int position) {
                 close();
             }
 
             @Override
-            public void onLongClick(int position) {
+            public void onLongClick(Model model, int position) {
 
             }
         });
-
-        requireActivity().getOnBackPressedDispatcher()
-                .addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
-                    @Override
-                    public void handleOnBackPressed() {
-                        requireActivity().finish();
-                    }
-                });
     }
 
     private void close() {

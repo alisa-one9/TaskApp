@@ -1,8 +1,10 @@
 package com.example.taskapp;
 
+import com.example.taskapp.models.Model;
+
 public interface OnItemClickListener {
 
-    void onItemClick(int position);
+    void onClick(Model model,int position);
 
-    void onLongClick(int position);
+    void onLongClick(Model model,int position);
 }

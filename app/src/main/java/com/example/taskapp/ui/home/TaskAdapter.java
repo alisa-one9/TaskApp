@@ -20,10 +20,11 @@ import com.example.taskapp.models.Model;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
-    private ArrayList<Model> list = new ArrayList<>();
+    private List<Model> list = new ArrayList<>();
     private int position;
     private OnItemClickListener onItemClickListener;
     private Button btn_menu_sort;
@@ -36,6 +37,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         return new ViewHolder(view);
     }
 
+    public TaskAdapter(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
@@ -75,6 +79,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         notifyItemRemoved(position);
     }
 
+    public void addApdateList(List<Model> models) {
+        list.clear();
+        list = models;
+        notifyDataSetChanged();
+    }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView textTv, dateTv;
@@ -83,16 +93,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             super(itemView);
             textTv = itemView.findViewById(R.id.textTitle);
             dateTv = itemView.findViewById(R.id.date_tv);
-            itemView.setOnClickListener(v -> onItemClickListener.onItemClick(getAdapterPosition()));
+            itemView.setOnClickListener(v -> onItemClickListener.onClick(list.get(getAdapterPosition()), getAdapterPosition()));
 
             itemView.setOnLongClickListener(v1 -> {
                 AlertDialog alertDialog = new AlertDialog.Builder(itemView.getContext()).setMessage("Вы хотите удалить?")
                         .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                list.remove(getAdapterPosition());
                                 App.appDatabase.taskDao().delete(list.get(getAdapterPosition()));
-                                notifyDataSetChanged();
+                                remove(getAdapterPosition());
                             }
                         }).setNegativeButton("Нет", null).create();
                 alertDialog.show();

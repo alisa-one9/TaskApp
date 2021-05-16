@@ -31,10 +31,12 @@ public class Preferences {
     }
 
     public static Preferences getInstance(Context context) {
+
         return setInstance = new Preferences(context);
     }
 
     public String getTxt() {
+
         return preferences.getString("text", null);
     }
 }

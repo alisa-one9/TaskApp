@@ -23,8 +23,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initNav();
         Preferences prefs = new Preferences(this);
-        if (!prefs.isBoardShown()) navController.navigate(R.id.boardFragment);
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) navController.navigate(R.id.phoneFragment);
+       if (!prefs.isBoardShown()) navController.navigate(R.id.boardFragment);
+       if (FirebaseAuth.getInstance().getCurrentUser() == null) navController.navigate(R.id.phoneFragment);
     }
 
     private void initNav() {
@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
 
             if (destination.getId() == R.id.boardFragment) {
                 getSupportActionBar().hide();
-
             } else {
                 getSupportActionBar().show();
             }
